@@ -1,0 +1,86 @@
+Received: from BY5PR14MB3605.namprd14.prod.outlook.com (2603:10b6:a03:1dd::12)
+ by MN2PR14MB2558.namprd14.prod.outlook.com with HTTPS; Wed, 29 Mar 2023
+ 15:52:27 +0000
+Received: from BN7PR06CA0071.namprd06.prod.outlook.com (2603:10b6:408:34::48)
+ by BY5PR14MB3605.namprd14.prod.outlook.com (2603:10b6:a03:1dd::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.38; Wed, 29 Mar
+ 2023 15:52:26 +0000
+Received: from BN8NAM04FT053.eop-NAM04.prod.protection.outlook.com
+ (2603:10b6:408:34:cafe::14) by BN7PR06CA0071.outlook.office365.com
+ (2603:10b6:408:34::48) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.43 via Frontend
+ Transport; Wed, 29 Mar 2023 15:52:26 +0000
+Authentication-Results: spf=none (sender IP is 128.175.132.228)
+ smtp.mailfrom=r0mgmt-standby.localdomain.hpc.udel.edu; dkim=none (message not
+ signed) header.d=none;dmarc=none action=none
+ header.from=r0mgmt-standby.localdomain.hpc.udel.edu;compauth=pass reason=105
+Received-SPF: None (protection.outlook.com:
+ r0mgmt-standby.localdomain.hpc.udel.edu does not designate permitted sender
+ hosts)
+Received: from r0mgmt-standby.localdomain.hpc.udel.edu (128.175.132.228) by
+ BN8NAM04FT053.mail.protection.outlook.com (10.13.161.30) with Microsoft SMTP
+ Server id 15.20.6222.35 via Frontend Transport; Wed, 29 Mar 2023 15:52:26
+ +0000
+X-IncomingTopHeaderMarker:
+ OriginalChecksum:E882958DFCB5B8513BF791DDE0318AF88056D738C28BE8FC15C8017F5870C8AE;UpperCasedChecksum:F2846B33DBD1ADAF44AA9F56FE2BA43F279EC2E8FC03B0BFD7317CEB69FED5CF;SizeAsReceived:638;Count:10
+Received: by r0mgmt-standby.localdomain.hpc.udel.edu (Postfix, from userid 501)
+	id 05EAB1C0A608A; Wed, 29 Mar 2023 11:52:25 -0400 (EDT)
+Date: Wed, 29 Mar 2023 11:52:25 -0400
+To: georgia.channing@live.com
+Subject: Slurm Job_id=3976221 Name=pd_class_shuffled_15_ray_4gpu Ended,
+ Run time 14:54:32, COMPLETED, ExitCode 0
+User-Agent: Heirloom mailx 12.5 7/5/10
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20230329155225.05EAB1C0A608A@r0mgmt-standby.localdomain.hpc.udel.edu>
+From: _slurmadm@r0mgmt-standby.localdomain.hpc.udel.edu (SLURM Administrator)
+X-IncomingHeaderCount: 10
+Return-Path: _slurmadm@r0mgmt-standby.localdomain.hpc.udel.edu
+X-MS-Exchange-Organization-ExpirationStartTime: 29 Mar 2023 15:52:26.1129
+ (UTC)
+X-MS-Exchange-Organization-ExpirationStartTimeReason: OriginalSubmit
+X-MS-Exchange-Organization-ExpirationInterval: 1:00:00:00.0000000
+X-MS-Exchange-Organization-ExpirationIntervalReason: OriginalSubmit
+X-MS-Exchange-Organization-Network-Message-Id:
+ 269369b6-463e-44cd-14c3-08db306d97e7
+X-EOPAttributedMessage: 0
+X-EOPTenantAttributedMessage: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa:0
+X-MS-Exchange-Organization-MessageDirectionality: Incoming
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic:
+ BN8NAM04FT053:EE_|BY5PR14MB3605:EE_|MN2PR14MB2558:EE_
+X-MS-Exchange-Organization-AuthSource:
+ BN8NAM04FT053.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+X-MS-UserLastLogonTime: 3/29/2023 3:45:38 PM
+X-MS-Office365-Filtering-Correlation-Id: 269369b6-463e-44cd-14c3-08db306d97e7
+X-MS-Exchange-EOPDirect: true
+X-Sender-IP: 128.175.132.228
+X-SID-PRA: _SLURMADM@R0MGMT-STANDBY.LOCALDOMAIN.HPC.UDEL.EDU
+X-SID-Result: NONE
+X-MS-Exchange-Organization-PCL: 2
+X-MS-Exchange-Organization-SCL: 1
+X-Microsoft-Antispam: BCL:0;
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Mar 2023 15:52:26.0660
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 269369b6-463e-44cd-14c3-08db306d97e7
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-AuthSource:
+ BN8NAM04FT053.eop-NAM04.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+ 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR14MB3605
+X-MS-Exchange-Transport-EndToEndLatency: 00:00:01.5803487
+X-MS-Exchange-Processed-By-BccFoldering: 15.20.6222.033
+X-Microsoft-Antispam-Mailbox-Delivery:
+	abwl:0;wl:0;pcwl:0;kl:0;dwl:0;dkl:0;rwl:0;ucf:0;jmr:0;ex:0;psp:0;auth:0;dest:I;ENG:(5062000305)(90000117)(90012020)(91020020)(91040095)(9050020)(9100338)(2008001134)(4810010)(4910033)(8820095)(9575002)(10195002)(9320005);
+X-Message-Info:
+	qZelhIiYnPnZEU7/gwQFzrHRfMjYORbZf0nAKL6y2bJjsP2TkLfawloNiACdDBy21INJ9xgCHp20ciZ7R+ldJdA55iL0//b4D2K8+M6JqJ4bDoV88Y1WJDbda7jNl1nKS954JndPa6xE+kT6klVJNxD5o9WoZFr+Km1n9KbtIU7IplNGQS0fLIhKMyP3F5BTlgktjmEztDvr6626KLQFiw==
+X-Message-Delivery: Vj0xLjE7dXM9MDtsPTA7YT0wO0Q9MTtHRD0yO1NDTD0z
+X-Microsoft-Antispam-Message-Info:
+	5dkW5sJ9hN9SGNLsTkzQ36bqzBgjU/xTOZGzi6uj7gie+dP31V9lZBqHhHS1gWdQ8LrNp4ajoAuN4EhYapbfq/PMyjotEOH+OqN/NX9ckXhHVvQuESD620TK/OXiXY9HxrHajAKW53pnCewlaIV6OZWJP9E9jEGKdYUzokPjyxoALVPK2kgiQEwIjB2DBthg9Q/Jyz3Uf6oByuLJD78eez497DRSnrN8kkOWn18ycMnIj3cdHSJTWyL57uwPHtntwkviYihE9uJo8IG1MpxQDPzfJp4nzeq3tMEXoJWev4S52g+m5w2R07D7RMWESALTia1U1JEBmP00rP+KVDKkIEEQhypT+MHnq4v2wAnNxNZ6EUJubXHzTwbNr82UShhFbU8ESmxQbu7mCLl3SR4liytnWypM7I6Q7elHVRTm2EoygsHwWHOTGLLxeJYsJVk6JjitV0kBdB5wRgWWRTurY6gxU+qzSq/IiTomOz0Szr/LRcCjBxzfhzsyjiHkmULR7y5w1kuN2m6ejfVDN/PATiZVtuzcZC87v0h1u/y1LcRtfB16IJ40xrMbOneDijMWvvZofQV/J6VpudllI5vPr24L9ZiX+nd+8280dUh7c1U00QcDJlbvzCNxK0fSILrJ2EJO9K5FolxXe2CQhKgFDKhvqoNi1/Sk+gG8hG3m1pqMt2c0Xoa8Xp9fLGVVCx8hxLPetv5DvX8A2lYRtUPyHfQlK+O7aNQ6B8EHe7D1g7TH7ih1m1FABoIV9lXADvd/cAUpDrLS9/3ktasPduCHuTh/1+l78iHpOVlqDylt+Qzh7LDiZOoKtvHhj7zh5a23FvuC/rrvcIht4pqvecXkt9x0zkYQ6ASnP9YRhsKCjHz8tyYmxTxi5r0IORvlbe22
+MIME-Version: 1.0
+
