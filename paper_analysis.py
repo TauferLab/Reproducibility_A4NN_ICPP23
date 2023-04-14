@@ -104,7 +104,7 @@ def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e
     ax.legend(loc='upper right',fontsize=12)
 
     plt.savefig('figures/epochs_saved.png')
-    plt.clf()
+    plt.close()
     return
 
 def get_run_time(row):
@@ -288,10 +288,8 @@ def make_graphic(one_line, pareto_optimals, title="FLOPS vs. Val Accuracy per Ar
     labels.append('Pareto Optimal')
     plt.scatter(flops, accs, s=250, marker='o', color='tab:orange', facecolor='None', linewidths=1.2, label='Pareto Optimal', zorder=10)
     plt.legend(labels, loc='lower right', fontsize=15)
-    plt.tight_layout()
-
     plt.savefig('figures/'+title.replace(" ", "_")+'.png')
-    plt.clf()
+    plt.close()
     return 
 
 def plot_paretos(no_stop, stop):
