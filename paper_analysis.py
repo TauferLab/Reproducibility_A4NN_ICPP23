@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 import matplotlib.cm as cm
 import numpy as np
-import math
-from datetime import datetime, timedelta
-import argparse
+from datetime import timedelta
 
 plt.rcParams.update(plt.rcParamsDefault)
 plt.rcParams['mathtext.fontset'] = 'stix'
@@ -262,7 +260,7 @@ def is_pareto_efficient_simple(unadjusted_costs):
     return is_efficient
 
 def make_graphic(one_line, pareto_optimals, title="FLOPS vs. Val Accuracy per Architecture", gens=10, children=10):
-    figure(figsize=(10, 8), dpi=160)
+    fig, ax = plt.subplots(layout='constrained', figsize=(10, 8), dpi=160)
 
     as_numpy = one_line.to_numpy()
 
