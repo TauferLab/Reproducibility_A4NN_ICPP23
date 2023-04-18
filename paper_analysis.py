@@ -9,11 +9,11 @@ from matplotlib import font_manager as fm
 
 # Settings to use for all plots
 plt.style.use('ggplot')
-figsize=(14,8)
+figsize=(12,8)
 
 cmap = cm.get_cmap('viridis')
 secs = 3600
-beams = ["1e14", "1e15", "1e16"]
+beams = ["Low", "Medium", "High"]
 tfont = fm.FontProperties(family='STIXGeneral', weight='bold', size=30)
 lfont = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=25, weight="bold")
 tick_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=20)
@@ -86,7 +86,6 @@ def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e
     multiplier = 0
 
     fig, ax = plt.subplots(layout='constrained', figsize=figsize)
-    # colors = cm.Blues(np.linspace(0.4, 0.9, 3))
     colors = ["xkcd:grey", "xkcd:orange", "xkcd:blue"]
 
     for index, (label, num_epochs) in enumerate(epochs_run.items()):
@@ -106,13 +105,14 @@ def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e
 
     ax.set_title('Percent Epochs Saved', font=tfont)
     ax.set_yticks(x + width, beams)
-    ax.set_xticklabels(ax.get_xticks(), color='black', font=tick_font)
+    xticks = [int(x) for x in ax.get_xticks()]
+    ax.set_xticklabels(xticks, color='black', font=tick_font)
     ax.set_yticklabels(beams, color='black', font=tick_font)
 
     handles, labels = plt.gca().get_legend_handles_labels()
     order = [2, 1, 0]
 
-    ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="center left", bbox_to_anchor=(1, 0.5),  prop=tick_font)
+    ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="upper center", bbox_to_anchor=(0.5, -0.1),  ncol=3, prop=tick_font)
 
     plt.savefig('figures/epochs_saved.png')
     plt.close()
@@ -235,8 +235,7 @@ def plot_times():
     ax.set_xticks(x + width, beams)
     ax.set_xticklabels(beams, color='black', font=tick_font)
     ax.set_yticklabels(ax.get_yticks(), color='black', font=tick_font)
-
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),  prop=tick_font)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.1),  ncol=4, prop=tick_font)
     plt.savefig('figures/time_saved.png')
     plt.close()
     return
@@ -275,7 +274,7 @@ def is_pareto_efficient_simple(unadjusted_costs):
     return is_efficient
 
 def make_graphic(one_line, pareto_optimals, title="FLOPS vs. Val Accuracy per Architecture", gens=10, children=10):
-    fig, ax = plt.subplots(layout='constrained', figsize=(12, 8), dpi=160)
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
 
     as_numpy = one_line.to_numpy()
 
