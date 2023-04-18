@@ -5,14 +5,18 @@ from matplotlib.pyplot import figure
 import matplotlib.cm as cm
 import numpy as np
 from datetime import timedelta
+from matplotlib import font_manager as fm
 
-plt.rcParams.update(plt.rcParamsDefault)
-plt.rcParams['mathtext.fontset'] = 'stix'
-plt.rcParams['font.family'] = 'STIXGeneral'
+# Settings to use for all plots
 plt.style.use('ggplot')
-cmap = cm.get_cmap('Blues')
+figsize=(14,8)
+
+cmap = cm.get_cmap('viridis')
 secs = 3600
 beams = ["1e14", "1e15", "1e16"]
+tfont = fm.FontProperties(family='STIXGeneral', weight='bold', size=30)
+lfont = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=25, weight="bold")
+tick_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=20)
 
 def load_data():
     data_files = []
@@ -71,9 +75,6 @@ def calculate_and_plot_epochs_savings(files):
     return [no_stop_1e14, no_stop_1e15, no_stop_1e16], [stop_1e14, stop_1e15, stop_1e16]
 
 def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e16):
-    width = 0.2
-    multiplier = 0
-
     epochs_run = {
         'Baseline': np.repeat(num_epochs_no_stop, 3),
         '1GPU with PENGUIN': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
@@ -84,24 +85,34 @@ def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e
     width = 0.25  # the width of the bars
     multiplier = 0
 
-    fig, ax = plt.subplots(layout='constrained', figsize=(12, 8))
-    colors = cm.Blues(np.linspace(0.4, 0.9, 3))
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize)
+    # colors = cm.Blues(np.linspace(0.4, 0.9, 3))
+    colors = ["xkcd:grey", "xkcd:orange", "xkcd:blue"]
 
     for index, (label, num_epochs) in enumerate(epochs_run.items()):
         print(label, num_epochs)
         offset = width * multiplier
         rects = ax.barh(x + offset, num_epochs, width, label=label, color=colors[index]) 
         labels = [str(round((1-(num_epochs[i]/num_epochs_no_stop))*100, 1))+'%' for i in range(len(num_epochs))]
-        ax.bar_label(rects, labels=labels ,padding=2)
+        ax.bar_label(rects, labels=labels ,padding=2, font=tick_font)
         multiplier += 1
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_xlabel('Epochs Completed', fontsize=20)
-    ax.set_ylabel('Beam Intensity', fontsize=20)
+    ax.set_xlabel('Epochs Completed', font=lfont)
+    ax.xaxis.label.set_color('black')
+    ax.set_ylabel('Beam Intensity', font=lfont)
+    ax.yaxis.label.set_color('black')
+    ax.set_xlim(0, 2700)
 
-    ax.set_title('Percent Epochs Saved', fontsize=25)
+    ax.set_title('Percent Epochs Saved', font=tfont)
     ax.set_yticks(x + width, beams)
-    ax.legend(loc='upper right',fontsize=12)
+    ax.set_xticklabels(ax.get_xticks(), color='black', font=tick_font)
+    ax.set_yticklabels(beams, color='black', font=tick_font)
+
+    handles, labels = plt.gca().get_legend_handles_labels()
+    order = [2, 1, 0]
+
+    ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="center left", bbox_to_anchor=(1, 0.5),  prop=tick_font)
 
     plt.savefig('figures/epochs_saved.png')
     plt.close()
@@ -192,38 +203,42 @@ def plot_times():
     stop_1e16 = np.array([time_df[b16 & stop & gpu1][time_format].item(), time_df[b16 & stop & gpu4][time_format].item()])/secs
 
     epochs_run = {
-        '1GPU without PENGUIN': (no_stop_1e14[0], no_stop_1e15[0], no_stop_1e16[0]),
-        '1GPU with PENGUIN': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
-        '4GPU without PENGUIN': (no_stop_1e14[1], no_stop_1e15[1], no_stop_1e16[1]),
-        '4GPU with PENGUIN': (stop_1e14[1], stop_1e15[1], stop_1e16[1]),
+        '1GPU': (no_stop_1e14[0], no_stop_1e15[0], no_stop_1e16[0]),
+        '1GPU + PENGUIN': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
+        '4GPU': (no_stop_1e14[1], no_stop_1e15[1], no_stop_1e16[1]),
+        '4GPU + PENGUIN': (stop_1e14[1], stop_1e15[1], stop_1e16[1]),
     }
 
     x = np.arange(len(beams))  # the label locations
-    width = 0.17  # the width of the bars
+    width = 0.19  # the width of the bars
     multiplier = 0
 
-    fig, ax = plt.subplots(layout='constrained', figsize=(12, 8))
-    colors = cm.Blues(np.linspace(0.4, 0.9, 4))
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize)
+    colors = ["xkcd:pale orange", "xkcd:orange", "xkcd:sky", "xkcd:blue"]
 
     print()
     for index, (label, times) in enumerate(epochs_run.items()):
         print(label, times)
         offset = width * multiplier
-        rects = ax.bar(x + offset, times, width, label=label, color=colors[index]) #, color= cmap(np.linspace(0, 1, 3))
+        rects = ax.bar(x + offset, times, width, label=label, color=colors[index]) 
         labels = [round(time, 2) for time in times]
-        ax.bar_label(rects, labels=labels ,padding=2)
+        ax.bar_label(rects, labels=labels ,padding=2, font=tick_font)
         multiplier += 1
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Run Time (hours)', fontsize=20)
-    ax.set_xlabel('Beam Intensity', fontsize=20)
+    # Labels, title, x-axis tick labels, etc.
+    ax.set_ylabel('Run Time (hours)', font=lfont)
+    ax.xaxis.label.set_color('black')
+    ax.set_xlabel('Beam Intensity', font=lfont)
+    ax.yaxis.label.set_color('black')
 
-    ax.set_title('Wall Hours Spent', fontsize=25)
+    ax.set_title('Wall Hours Spent', font=tfont)
     ax.set_xticks(x + width, beams)
-    ax.legend(loc='upper right', fontsize=12)
+    ax.set_xticklabels(beams, color='black', font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color='black', font=tick_font)
 
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),  prop=tick_font)
     plt.savefig('figures/time_saved.png')
-
+    plt.close()
     return
 
 def one_line_per_arch_penguin(arch_df):
@@ -260,16 +275,16 @@ def is_pareto_efficient_simple(unadjusted_costs):
     return is_efficient
 
 def make_graphic(one_line, pareto_optimals, title="FLOPS vs. Val Accuracy per Architecture", gens=10, children=10):
-    fig, ax = plt.subplots(layout='constrained', figsize=(10, 8), dpi=160)
+    fig, ax = plt.subplots(layout='constrained', figsize=(12, 8), dpi=160)
 
     as_numpy = one_line.to_numpy()
 
-    plt.xlabel('FLOPS', fontsize=20)
-    plt.ylabel('Validation Accuracy', fontsize=20)
-    plt.title(title, fontsize=24)
+    plt.xlabel('FLOPS', color='black', font=lfont)
+    plt.ylabel('Validation Accuracy', color='black', font=lfont)
+    plt.title(title, font=tfont)
     plt.ylim(85, 100.2)
 
-    colors = cm.Blues(np.linspace(0, 1, gens))
+    colors = cm.viridis_r(np.linspace(0, 1, gens))
     size=100
 
     labels = list()
@@ -281,13 +296,15 @@ def make_graphic(one_line, pareto_optimals, title="FLOPS vs. Val Accuracy per Ar
             labels.append(f"Generation {g // gens}")
         
             ngen = as_numpy[start:end + 1]
-            plt.scatter(as_numpy[start:end+1, 2], as_numpy[start:end+1, 1], color=colors[g // gens], s=size, label=f"Generation {g // gens}", zorder=3)
+            ax.scatter(as_numpy[start:end+1, 2], as_numpy[start:end+1, 1], color=colors[g // gens], s=size, label=f"Generation {g // gens}", zorder=3)
     
     accs = pareto_optimals['final_acc'].to_numpy()
     flops = pareto_optimals['flops'].to_numpy()
     labels.append('Pareto Optimal')
-    plt.scatter(flops, accs, s=250, marker='o', color='tab:orange', facecolor='None', linewidths=1.2, label='Pareto Optimal', zorder=10)
-    plt.legend(labels, loc='lower right', fontsize=15)
+    ax.scatter(flops, accs, s=250, marker='o', color='xkcd:red', facecolor='None', linewidths=1.2, label='Pareto Optimal', zorder=10)
+    ax.set_xticklabels(ax.get_xticks(), color="black", font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color="black", font=tick_font)
+    plt.legend(labels, loc='lower right', prop=tick_font)
     plt.savefig('figures/'+title.replace(" ", "_")+'.png')
     plt.close()
     return 
