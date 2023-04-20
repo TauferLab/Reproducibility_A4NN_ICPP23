@@ -10,6 +10,7 @@ from matplotlib import font_manager as fm
 # Settings to use for all plots
 plt.style.use('ggplot')
 figsize=(12,8)
+size=200
 
 cmap = cm.get_cmap('viridis')
 secs = 3600
@@ -28,51 +29,6 @@ def load_data():
                 data_files.append(f)
 
     return data_files
-
-def calculate_and_plot_epochs_savings(files):
-    no_stop_1e14, no_stop_1e15, no_stop_1e16 = [], [], []
-    stop_1e14, stop_1e15, stop_1e16 = [], [], []
-    stop_1e14_len, stop_1e15_len, stop_1e16_len = [], [], []
-   
-    for f in files: 
-        if "no" in f:
-            df = pd.read_csv(f)
-            num_epochs_no_stopping = len(df.index) # non-stopped file
-
-            if "1e14" in f:
-                no_stop_1e14.append(df) 
-            elif "1e15" in f:
-                no_stop_1e15.append(df)
-            elif "1e16" in f:
-                no_stop_1e16.append(df)
-
-        beam = f.split('/')[-1].split('_')[1].strip()
-        gpus = f.split('/')[-1].split('_')[0].strip()
-        stop = f.split('/')[-1].strip()
-        if "stopping" in stop:
-            df = pd.read_csv(f)
-            print(f"Num epochs completed for {gpus} {beam} with PENGUIN:", len(df.index))
-
-            if "1e14" in stop:
-                stop_1e14.append(df) 
-                stop_1e14_len.append(len(df.index))
-            elif "1e15" in stop:
-                stop_1e15.append(df) 
-                stop_1e15_len.append(len(df.index))
-            elif "1e16" in stop:
-                stop_1e16.append(df) 
-                stop_1e16_len.append(len(df.index))
-
-    print()
-    avg_epochs_completed = [sum(stop_1e14_len)/len(stop_1e14_len), sum(stop_1e15_len)/len(stop_1e15_len), sum(stop_1e16_len)/len(stop_1e16_len)]
-    for i, b in enumerate(beams):
-        print(f"Avg. epochs completed for {b}: {avg_epochs_completed[i]}")
-        percent_epochs_saved = 1-(avg_epochs_completed[i]/num_epochs_no_stopping)
-        print(f"Avg. percent epochs saved for {b}: {percent_epochs_saved*100}\n")
-
-    plot_epochs_savings(beams, num_epochs_no_stopping, stop_1e14_len, stop_1e15_len, stop_1e16_len)
-
-    return [no_stop_1e14, no_stop_1e15, no_stop_1e16], [stop_1e14, stop_1e15, stop_1e16]
 
 def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e16):
     epochs_run = {
@@ -114,7 +70,7 @@ def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e
 
     ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="upper center", bbox_to_anchor=(0.5, -0.1),  ncol=3, prop=tick_font)
 
-    plt.savefig('figures/epochs_saved.png')
+    plt.savefig('figures/figure10.png')
     plt.close()
     return
 
@@ -273,97 +229,433 @@ def is_pareto_efficient_simple(unadjusted_costs):
             is_efficient[i] = True  # And keep self
     return is_efficient
 
-def make_graphic(one_line, pareto_optimals, title="FLOPS vs. Val Accuracy per Architecture", gens=10, children=10):
-    fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
+def get_epoch_converged(arch_df):
+    sorted_by_epoch = arch_df.sort_values('epoch')
+    try:
+        converged = sorted_by_epoch[sorted_by_epoch.converged==True].iloc[0]
+        return pd.Series({'epoch_converged': converged['epoch'], 'final_fitness': sorted_by_epoch['val_accs'].iloc[-1], 'prediction':converged['predictions']})
+    except:
+        return pd.Series({'epoch_converged': np.inf, 'final_fitness': sorted_by_epoch['val_accs'].iloc[-1], 'prediction':None})
 
-    as_numpy = one_line.to_numpy()
+def all_paretos(data_files):
+    all_paretos = pd.DataFrame()
+    for i in data_files:  
+        df = pd.read_csv(i)
+        by_arch = df.groupby('arch')
+
+        if "1e14" in i:
+            beam = "Low"
+        elif "1e15" in i:
+            beam = "Medium"
+        elif "1e16" in i:  
+            beam = "High"    
+
+        if "no" in i:  
+            stop = False
+            one_line = by_arch.apply(one_line_per_arch).sort_values('arch', ascending=True).reset_index()  
+        elif "stopping" in i:  
+            stop = True  
+            one_line = by_arch.apply(one_line_per_arch_penguin).sort_values('arch', ascending=True).reset_index()
+
+        if "1gpu" in i:  
+            gpu = 1  
+        elif "4gpu" in i:  
+            gpu = 4  
+
+        print(one_line.head)
+        sorted_by_fitness = one_line.sort_values('final_acc', ascending=False).head()
+        costs = one_line[['final_acc', 'flops']].to_numpy()
+        pareto_optimals = is_pareto_efficient_simple(costs) 
+        one_line['pareto_optimal'] = pareto_optimals
+        pareto_optimal_arches = one_line.loc[one_line['pareto_optimal'] == True].copy()
+
+        pareto_optimal_arches['beam'] = beam
+        pareto_optimal_arches['gpus'] = gpu
+        pareto_optimal_arches['stop'] = stop
+
+        all_paretos = pd.concat([all_paretos, pareto_optimal_arches], ignore_index=True)
+
+    return all_paretos
+
+def make_figure2():
+    df= pd.read_csv('icpp_training_results/1gpu/no_stopping/1gpu_1e15_training_data.csv')
+    by_arch = df.groupby('arch')
+    where_converged = by_arch.apply(get_epoch_converged).reset_index()  
+    print(where_converged.sort_values('epoch_converged', ascending=True).iloc[20:40])
+    percent_converged = len(where_converged[where_converged.epoch_converged!=np.inf].index) / len(where_converged.index) * 100
+    print("Percent Converged is: ", percent_converged)
+    mean = where_converged[where_converged.epoch_converged!=np.inf].epoch_converged.mean()
+    print("Avg epoch converged (for those converged) is: ", mean)
+    print("converged arches and their earliest convergence:")
+    only_converged_arches = pd.DataFrame(where_converged.loc[where_converged.epoch_converged!=np.inf,:])
+    print(only_converged_arches.head())
+
+    arch_44 = df[df['arch']==38]
+    fig, ax = plt.subplots(layout='constrained', figsize=(12,5), dpi=200)
+
+    a, b, c = 100.2, 1.15, 17
+
+    x = np.linspace(0.5,26,200)
+    y = a-b**(c-x)
+
+    epochs, fitness = arch_44['epoch'].to_list(), arch_44['val_accs'].to_list()
+    prediction, actual = 99.614529, 99.943311
+
+    ax.plot(x,y,color="#2C4D96",label="Predictive Model", linewidth=3)
+
+    ax.scatter(epochs, fitness, c='black', marker='o', facecolor='None', label='Observed Accuracy')
+    ax.vlines(12,90,101,colors='#990000',linestyles=":",linewidth=4, label="Prediction Converged")
+    ax.axvspan(12, 26, color = 'k', alpha = 0.2, label="Avoidable Training")
+
+    ax.annotate('Predicted Accuracy = {:.2f}'.format(prediction), xy=(0.68, 0.68), xycoords='axes fraction', font=tick_font)
+    ax.annotate('Actual accuracy = {:.2f}'.format(actual), xy=(0.68, 0.75), xycoords='axes fraction', font=tick_font)
+
+    ax.set_ylim(90, 101)
+    ax.set_xlim(0, 25)
+
+    ax.set_ylabel("Accuracy (%)", font=lfont)
+    ax.set_xlabel("Number of Epochs of Training", font=lfont)
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    ax.legend(loc='lower right', prop=tick_font)
+
+    plt.savefig('figures/figure2.png')
+    return
+
+def make_figure8():
+    # 1 GPU 
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
 
     plt.xlabel('FLOPS', color='black', font=lfont)
     plt.ylabel('Validation Accuracy', color='black', font=lfont)
-    plt.title(title, font=tfont)
-    plt.ylim(85, 100.2)
+    plt.xlim(325, 700)
+    plt.ylim(87, 100.2)
 
-    colors = cm.viridis_r(np.linspace(0, 1, gens))
-    size=100
+    colors = ["xkcd:light orange", "xkcd:orange", "xkcd:burnt orange"]
+    markers = ["o", "^", ""]
+    size=200
 
-    labels = list()
-    start, end, ng = 0, 0, 0
-    for g in range(0, gens * children):
-        if g == 0 or g % gens == 0:
-            start = g
-            end = start + (children - 1)
-            labels.append(f"Generation {g // gens}")
-        
-            ngen = as_numpy[start:end + 1]
-            ax.scatter(as_numpy[start:end+1, 2], as_numpy[start:end+1, 1], color=colors[g // gens], s=size, label=f"Generation {g // gens}", zorder=3)
+    low_no = [93.909045, 93.293021, 97.763920]
+    low_no_peng_flops = [595.47, 677.27, 597.57]
+    low_pred = [98.804643, 96.645275, 99.532435]
+    low_true = [93.55, 93.87, 97.833207]
+    low_peng_flops = [624.04, 597.04, 661.70]
+
+    medium_no = [99.162257, 97.564701, 98.412698]
+    medium_no_peng_flops = [615.04, 533.20, 597.33]
+    medium_pred = [99.559083, 95.722359, 99.937012]
+    medium_true = [99.559083, 99.067775, 99.937012]
+    medium_peng_flops = [599.71, 352.82, 679.70]
+
+    high_no = [99.798438, 99.968506, 99.949609]
+    high_no_peng_flops = [352.82, 432.79, 415.08]
+    high_pred = [99.930713, 98.251432, 100.000000]
+    high_true = [99.930713, 100.000000, 100.000000]
+    high_peng_flops = [470.66, 470.66, 531.06]
+
+    l1 = ax.scatter(low_no_peng_flops, low_no, marker= "o" , s=size, color=colors[0], label= "Low Beam" )
+    l2 = ax.scatter(low_peng_flops, low_pred,  s=size, marker= "^" , color=colors[0])
+    l3 = ax.scatter(low_peng_flops, low_true, s=size, marker="s", color=colors[0])
+
+    l4 = ax.scatter(medium_no_peng_flops, medium_no, marker= "o" , s=size, color=colors[1], label= "Medium Beam" )
+    l5 = ax.scatter(medium_peng_flops, medium_pred, s=size, marker= "^" , color=colors[1])
+    l6 = ax.scatter(medium_peng_flops, medium_true, s=size, marker="s", color=colors[1])
+
+    l7 = ax.scatter(high_no_peng_flops, high_no, s=size, marker= "o" , color=colors[2], label= "High Beam" )
+    l8 = ax.scatter(high_peng_flops, high_pred, s=size, marker= "^" , color=colors[2])
+    l9 = ax.scatter(high_peng_flops, high_true, s=size, marker="s", color=colors[2])
+
+    l10 = ax.scatter([0], [0], s=size, marker='o', color= "black" , label= "No PENGUIN" )
+    l11 = ax.scatter([0], [0], s=size, marker='^', color= "black" , label= "Predicted PENGUIN Fitness" )
+    l12 = ax.scatter([0], [0], s=size, marker='s', color= "black", label = "True PENGUIN Fitness")
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    ax.legend(handles=[l1, l4, l7, l10, l11, l12], loc= "lower right" , prop=tick_font)
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    plt.savefig('figures/figure8.png')
+    return
+
+def make_figure9():
+    # 4 GPUs
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
+
+    plt.xlabel('FLOPS', color='black', font=lfont)
+    plt.ylabel('Validation Accuracy', color='black', font=lfont)
+    plt.xlim(300, 800)
+    plt.ylim(92, 100.2)
+
+    colors = ["xkcd:sky", "xkcd:cerulean blue", "xkcd:cobalt blue"]
+    markers = ["o", "^", ""]
+    size=200
+
+    low_no = [97.751323, 98.425296, 93.902746]
+    low_no_peng_flops = [615.2853, 712.9844, 531.0555]
+    low_pred = [98.680175, 99.259251, 99.383542 ]
+    low_true = [96.882086 , 97.159234, 97.889897 ]
+    low_peng_flops = [517.2993, 633.2752, 679.4103]
+
+    medium_no = [99.212648, 99.577979, 99.930713 ]
+    medium_no_peng_flops = [548.7686 , 695.3055 , 777.1094 ]
+    medium_pred = [98.770630, 99.911817, 99.905518]
+    medium_true = [97.379693, 99.911817, 99.905518]
+    medium_peng_flops = [533.2046, 704.4046, 697.6971]
+
+    high_no = [100.000000, 100.000000, 99.962207 ]
+    high_no_peng_flops = [513.0555 , 495.3423, 432.7927]
+    high_pred = [100.000000, 98.704736, 99.735450]
+    high_true = [100.000000, 96.403376 , 99.735450]
+    high_peng_flops = [599.7112, 360.3750, 434.9419]
+
+    l1 = ax.scatter(low_no_peng_flops, low_no, marker= "o" , s=size, color=colors[0], label= "Low Beam" )
+    l2 = ax.scatter(low_peng_flops, low_pred,  s=size, marker= "^" , color=colors[0])
+    l3 = ax.scatter(low_peng_flops, low_true, s=size, marker="s", color=colors[0])
+
+    l4 = ax.scatter(medium_no_peng_flops, medium_no, marker= "o" , s=size, color=colors[1], label= "Medium Beam" )
+    l5 = ax.scatter(medium_peng_flops, medium_pred, s=size, marker= "^" , color=colors[1])
+    l6 = ax.scatter(medium_peng_flops, medium_true, s=size, marker="s", color=colors[1])
+
+    l7 = ax.scatter(high_no_peng_flops, high_no, s=size, marker= "o" , color=colors[2], label= "High Beam" )
+    l8 = ax.scatter(high_peng_flops, high_pred, s=size, marker= "^" , color=colors[2])
+    l9 = ax.scatter(high_peng_flops, high_true, s=size, marker="s", color=colors[2])
+
+    l10 = ax.scatter([0], [0], s=size, marker='o', color= "black" , label= "No PENGUIN" )
+    l11 = ax.scatter([0], [0], s=size, marker='^', color= "black" , label= "Predicted PENGUIN Fitness" )
+    l12 = ax.scatter([0], [0], s=size, marker='s', color= "black", label = "True PENGUIN Fitness")
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    ax.legend(handles=[l1, l4, l7, l10, l11, l12], loc= "lower right" , prop=tick_font)
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    plt.savefig('figures/figure9.png')
+    return
+
+def make_figure10(files):
+    no_stop_1e14, no_stop_1e15, no_stop_1e16 = [], [], []
+    stop_1e14, stop_1e15, stop_1e16 = [], [], []
+    stop_1e14_len, stop_1e15_len, stop_1e16_len = [], [], []
+   
+    for f in files: 
+        if "no" in f:
+            df = pd.read_csv(f)
+            num_epochs_no_stopping = len(df.index) # non-stopped file
+
+            if "1e14" in f:
+                no_stop_1e14.append(df) 
+            elif "1e15" in f:
+                no_stop_1e15.append(df)
+            elif "1e16" in f:
+                no_stop_1e16.append(df)
+
+        beam = f.split('/')[-1].split('_')[1].strip()
+        gpus = f.split('/')[-1].split('_')[0].strip()
+        stop = f.split('/')[-1].strip()
+        if "stopping" in stop:
+            df = pd.read_csv(f)
+            print(f"Num epochs completed for {gpus} {beam} with PENGUIN:", len(df.index))
+
+            if "1e14" in stop:
+                stop_1e14.append(df) 
+                stop_1e14_len.append(len(df.index))
+            elif "1e15" in stop:
+                stop_1e15.append(df) 
+                stop_1e15_len.append(len(df.index))
+            elif "1e16" in stop:
+                stop_1e16.append(df) 
+                stop_1e16_len.append(len(df.index))
+
+    print()
+    avg_epochs_completed = [sum(stop_1e14_len)/len(stop_1e14_len), sum(stop_1e15_len)/len(stop_1e15_len), sum(stop_1e16_len)/len(stop_1e16_len)]
+    for i, b in enumerate(beams):
+        print(f"Avg. epochs completed for {b}: {avg_epochs_completed[i]}")
+        percent_epochs_saved = 1-(avg_epochs_completed[i]/num_epochs_no_stopping)
+        print(f"Avg. percent epochs saved for {b}: {percent_epochs_saved*100}\n")
+
+    plot_epochs_savings(beams, num_epochs_no_stopping, stop_1e14_len, stop_1e15_len, stop_1e16_len)
+
+    return [no_stop_1e14, no_stop_1e15, no_stop_1e16], [stop_1e14, stop_1e15, stop_1e16]
+
+def make_figure11():
+    gpu1_1e14_stopping = pd.read_csv('./icpp_training_results/1gpu/stopping/1gpu_1e14_stopping_training_data.csv')
+    gpu1_1e15_stopping = pd.read_csv('./icpp_training_results/1gpu/stopping/1gpu_1e15_stopping_training_data.csv')
+    gpu1_1e16_stopping = pd.read_csv('./icpp_training_results/1gpu/stopping/1gpu_1e16_stopping_training_data.csv')
+    gpu4_1e14_stopping = pd.read_csv('./icpp_training_results/4gpu/stopping/4gpu_1e14_stopping_training_data.csv')
+    gpu4_1e15_stopping = pd.read_csv('./icpp_training_results/4gpu/stopping/4gpu_1e15_stopping_training_data.csv')
+    gpu4_1e16_stopping = pd.read_csv('./icpp_training_results/4gpu/stopping/4gpu_1e16_stopping_training_data.csv')
+
+    all_stopping = [gpu1_1e14_stopping, gpu1_1e15_stopping, gpu1_1e16_stopping, gpu4_1e14_stopping, gpu4_1e15_stopping, gpu4_1e16_stopping]
     
-    accs = pareto_optimals['final_acc'].to_numpy()
-    flops = pareto_optimals['flops'].to_numpy()
-    labels.append('Pareto Optimal')
-    ax.scatter(flops, accs, s=250, marker='o', color='xkcd:red', facecolor='None', linewidths=1.2, label='Pareto Optimal', zorder=10)
-    ax.set_xticklabels(ax.get_xticks(), color="black", font=tick_font)
-    ax.set_yticklabels(ax.get_yticks(), color="black", font=tick_font)
-    plt.legend(labels, loc='lower right', prop=tick_font)
-    plt.savefig('figures/'+title.replace(" ", "_")+'.png')
-    plt.close()
-    return 
+    sets = list()
+    percents = list()
 
-def plot_paretos(no_stop, stop):
+    for df in all_stopping:
+        by_arch = df.groupby('arch')
+        where_converged = by_arch.apply(get_epoch_converged).reset_index()
+        only_converged_arches = pd.DataFrame(where_converged.loc[where_converged.epoch_converged!=np.inf,:])
+        sets.append(only_converged_arches.epoch_converged.to_list())
+        
 
-    for n, beam in enumerate(no_stop): # Non-stop DataFrames for 1e14, 1e15, 1e16
-        if n == 0: # 1e14
-            tb = "Low Beam"
-        elif n == 1: # 1e15
-            tb = "Medium Beam"
-        elif n == 2: # 1e16
-            tb = "High Beam"
-            
-        for i, df in enumerate(beam):
-            if i % 2 == 0: # 1 GPU
-                title = f'1GPU with {tb} without PENGUIN'
-            else:
-                title = f'4GPU with {tb} without PENGUIN'
+        percent_converged = len(where_converged[where_converged.epoch_converged!=np.inf].index) / len(where_converged.index) * 100
+        percents.append(percent_converged)
+        print("percent converged is:", percent_converged)
 
-            by_arch = df.groupby('arch')
-            one_line = by_arch.apply(one_line_per_arch).sort_values('arch', ascending=True).reset_index()
-            sorted_by_fitness = one_line.sort_values('final_acc', ascending=False).head()
-            costs = one_line[['final_acc', 'flops']].to_numpy()
-            pareto_optimals = is_pareto_efficient_simple(costs)
-            one_line['pareto_optimal'] = pareto_optimals
-            pareto_optimal_arches = one_line.loc[one_line['pareto_optimal'] == True]
-            print(f"\nParetos For {tb}:\n {pareto_optimal_arches}")
-            make_graphic(one_line, pareto_optimal_arches, title=title)
+    data_to_plot = sets
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize)
 
-    for n, beam in enumerate(stop): # Non-stop DataFrames for 1e14, 1e15, 1e16
-        if n == 0: # 1e14
-            tb = "Low Beam"
-        elif n == 1: # 1e15
-            tb = "Medium Beam"
-        elif n == 2: # 1e16
-            tb = "High Beam"
-            
-        for i, df in enumerate(beam):
-            if i % 2 == 0: # 1 GPU
-                title = f'1GPU with {tb} with PENGUIN'
-            else:
-                title = f'4GPU with {tb} with PENGUIN'
+    ax = fig.add_axes([0,0,1,1])
 
-            by_arch = df.groupby('arch')
-            one_line = by_arch.apply(one_line_per_arch).sort_values('arch', ascending=True).reset_index()
-            sorted_by_fitness = one_line.sort_values('final_acc', ascending=False).head()
-            costs = one_line[['final_acc', 'flops']].to_numpy()
-            pareto_optimals = is_pareto_efficient_simple(costs)
-            one_line['pareto_optimal'] = pareto_optimals
-            pareto_optimal_arches = one_line.loc[one_line['pareto_optimal'] == True]
-            print(f"\nParetos For {tb}:\n {pareto_optimal_arches}")
-            make_graphic(one_line, pareto_optimal_arches, title=title)   
+    ax.set_ylim(4, 25)
+    ax.set_xticklabels(['', 'Low Beam\n1 GPU', 'Medium Beam\n1 GPU', 'High Beam\n1 GPU', 'Low Beam\n4 GPU', 'Medium Beam\n4 GPU', 'High Beam\n4 GPU'], font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), font=tick_font)
+    ax.set_xlabel('Test Configuration', font=lfont)
+    ax.set_ylabel('Epoch Converged', font=lfont)
+
+    bp = ax.violinplot(data_to_plot, showmeans=True)
+    colors=["xkcd:orange", "xkcd:aquamarine", "xkcd:light blue", "xkcd:dark orange", "xkcd:blue green", "xkcd:blue"]
+
+    for pc, color, percent in zip(bp['bodies'], colors, percents):
+        pc.set_facecolor(color)
+        pc.set_edgecolor('black')
+        pc.set_label(str(int(percent))+'%')
+        pc.set_alpha(1)
+
+    plt.legend(title="Percent Converged", prop=tick_font, title_fontproperties=tick_font)
+    plt.savefig('figures/figure11.png')
     
     return
 
+def make_sup1(df):
+    # 1 GPU - With and Without PENGUIN
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
+
+    plt.xlabel('FLOPS', color='black', font=lfont)
+    plt.ylabel('Validation Accuracy', color='black', font=lfont)
+    plt.ylim(90, 100.2)
+
+    colors = ["xkcd:light orange", "xkcd:orange", "xkcd:burnt orange"]
+    markers = ["o", "^"]
+    size=200
+
+    low, medium, high = (df['beam'] == "Low"), (df['beam'] == "Medium"), (df['beam'] == "High")
+    gpu1, gpu4 = (df['gpus'] == 1), (df['gpus'] == 4)
+    no_stop, stop = (df['stop'] == False), (df['stop'] == True)
+
+    low_acc = df.loc[low & gpu1 & no_stop]['final_acc'].to_numpy()
+    low_flops = df.loc[low & gpu1 & no_stop]['flops'].to_numpy()
+
+    low_peng_acc = df.loc[low & gpu1 & stop]['final_acc'].to_numpy()
+    low_peng_flops = df.loc[low & gpu1 & stop]['flops'].to_numpy()
+
+    med_acc = df.loc[medium & gpu1 & no_stop]['final_acc'].to_numpy()
+    med_flops = df.loc[medium & gpu1 & no_stop]['flops'].to_numpy()
+
+    med_peng_acc = df.loc[medium & gpu1 & stop]['final_acc'].to_numpy()
+    med_peng_flops = df.loc[medium & gpu1 & stop]['flops'].to_numpy()
+
+    high_acc = df.loc[high & gpu1 & no_stop]['final_acc'].to_numpy()
+    high_flops = df.loc[high & gpu1 & no_stop]['flops'].to_numpy()
+
+    high_peng_acc = df.loc[high & gpu1 & stop]['final_acc'].to_numpy()
+    high_peng_flops = df.loc[high & gpu1 & stop]['flops'].to_numpy()
+
+    l1 = ax.scatter(low_flops, low_acc, marker= "o" , s=size, color=colors[0], label= "Low Beam" )
+    l2 = ax.scatter(low_peng_flops, low_peng_acc,  s=size, marker= "^" , color=colors[0])
+    l3 = ax.scatter(med_flops, med_acc, marker= "o" , s=size, color=colors[1], label= "Medium Beam" )
+    l4 = ax.scatter(med_peng_flops, med_peng_acc, s=size, marker= "^" , color=colors[1])
+    l5 = ax.scatter(high_flops, high_acc, s=size, marker= "o" , color=colors[2], label= "High Beam" )
+    l6 = ax.scatter(high_peng_flops, high_peng_acc, s=size, marker= "^" , color=colors[2])
+    l7 = ax.scatter([0], [0], s=size, marker='o', color= "black" , label= "Without PENGUIN" )
+    l8 = ax.scatter([0], [0], s=size, marker='^', color= "black" , label= "With PENGUIN" )
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    ax.legend(handles=[l1, l3, l5, l7, l8], loc= "lower right" , prop=tick_font)
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    plt.savefig('figures/supplemental_figure1.png')
+
+    return
+
+def make_sup2(df):
+    # 4 GPU - With and Without PENGUIN
+    fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
+
+    plt.xlabel('FLOPS', color='black', font=lfont)
+    plt.ylabel('Validation Accuracy', color='black', font=lfont)
+    plt.ylim(90, 100.2)
+
+    colors = ["xkcd:sky", "xkcd:cerulean blue", "xkcd:cobalt blue"]
+
+    low, medium, high = (df['beam'] == "Low"), (df['beam'] == "Medium"), (df['beam'] == "High")
+    gpu1, gpu4 = (df['gpus'] == 1), (df['gpus'] == 4)
+    no_stop, stop = (df['stop'] == False), (df['stop'] == True)
+
+    low_acc = df.loc[low & gpu4 & no_stop]['final_acc'].to_numpy()
+    low_flops = df.loc[low & gpu4 & no_stop]['flops'].to_numpy()
+
+    low_peng_acc = df.loc[low & gpu4 & stop]['final_acc'].to_numpy()
+    low_peng_flops = df.loc[low & gpu4 & stop]['flops'].to_numpy()
+
+    med_acc = df.loc[medium & gpu4 & no_stop]['final_acc'].to_numpy()
+    med_flops = df.loc[medium & gpu4 & no_stop]['flops'].to_numpy()
+
+    med_peng_acc = df.loc[medium & gpu4 & stop]['final_acc'].to_numpy()
+    med_peng_flops = df.loc[medium & gpu4 & stop]['flops'].to_numpy()
+
+    high_acc = df.loc[high & gpu4 & no_stop]['final_acc'].to_numpy()
+    high_flops = df.loc[high & gpu4 & no_stop]['flops'].to_numpy()
+
+    high_peng_acc = df.loc[high & gpu4 & stop]['final_acc'].to_numpy()
+    high_peng_flops = df.loc[high & gpu4 & stop]['flops'].to_numpy()
+
+    l1 = ax.scatter(low_flops, low_acc, marker= "o" , s=size, color=colors[0], label= "Low Beam" )
+    l2 = ax.scatter(low_peng_flops, low_peng_acc,  s=size, marker= "^" , color=colors[0])
+    l3 = ax.scatter(med_flops, med_acc, marker= "o" , s=size, color=colors[1], label= "Medium Beam" )
+    l4 = ax.scatter(med_peng_flops, med_peng_acc, s=size, marker= "^" , color=colors[1])
+    l5 = ax.scatter(high_flops, high_acc, s=size, marker= "o" , color=colors[2], label= "High Beam" )
+    l6 = ax.scatter(high_peng_flops, high_peng_acc, s=size, marker= "^" , color=colors[2])
+    l7 = ax.scatter([0], [0], s=size, marker='o', color= "black" , label= "Without PENGUIN" )
+    l8 = ax.scatter([0], [0], s=size, marker='^', color= "black" , label= "With PENGUIN" )
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    ax.legend(handles=[l1, l3, l5, l7, l8], loc= "lower right" , prop=tick_font)
+
+    ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
+    ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
+    plt.savefig('figures/supplemental_figure2.png')
+
 if __name__=="__main__":
     files = load_data()
-    no_stop, stop = calculate_and_plot_epochs_savings(files)
+
+    # Figure 2 - Predictive Model Predictions vs. Observed Accuracy
+    make_figure2()
+
+    # Figure 8 - Single GPU Top 3 Pareto Optimal Architectures
+    make_figure8()
+
+    # Figure 9 - 4 GPUs Top 3 Pareto Optimal Architectures
+    make_figure9()
+
+    # Figure 10
+    no_stop, stop = make_figure10(files)
+
+    # Figure 11 - Violin Plot of Convergence
+    make_figure11()
+
+    # Figure 12
     print_wall_times(no_stop, stop)
     save_and_plot_times()
 
-    plot_paretos(no_stop, stop)
+    # Supplemental Figure 1
+    df = all_paretos(files)
+    make_sup1(df)
+    
+    # Supplemental Figure 2
+    make_sup2(df)
