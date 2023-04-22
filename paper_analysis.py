@@ -482,7 +482,7 @@ def plot_times():
     stop_1e16 = np.array([time_df[b16 & stop & gpu1][time_format].item(), time_df[b16 & stop & gpu4][time_format].item()])/secs
 
     epochs_run = {
-        'NAS Only': (no_stop_1e14[0], no_stop_1e15[0], no_stop_1e16[0]),
+        'NSGA-Net': (no_stop_1e14[0], no_stop_1e15[0], no_stop_1e16[0]),
         'A4NN (1 GPU)': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
         'A4NN (4 GPUs)': (stop_1e14[1], stop_1e15[1], stop_1e16[1]),
     }
