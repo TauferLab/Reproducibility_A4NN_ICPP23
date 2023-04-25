@@ -22,6 +22,10 @@ tick_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size
 bar_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=25)
 legend_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=30)
 
+# Create figures/ directory to place all figures, if it doesn't already exist
+if not os.path.exists("./figures"):
+    os.mkdir("./figures")
+
 def load_data():
     data_files = []
 
