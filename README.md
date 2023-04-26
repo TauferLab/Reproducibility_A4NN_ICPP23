@@ -1,6 +1,6 @@
-# Architecture Descriptions, Model Checkpoints, and Training Histories for NSGA-Net with PENGUIN on Protein Diffraction Data
+# Architecture Descriptions, Model Checkpoints, and Training Histories for A4NN Workflow on Protein Diffraction Data
 
-This repository contains all the necessary scripts and data to reproduce figures and results from our ICPP 2023 paper **submission**.
+This repository contains all the necessary scripts and data to reproduce figures and results from our ICPP 2023 paper **submission**. The Dataverse for this project is located at https://doi.org/10.7910/DVN/JS9FR6.
 
 ## File Structure:
 
@@ -40,39 +40,39 @@ This repository contains all the necessary scripts and data to reproduce figures
 ├── models
 │   ├── 1gpu
 │   │   ├── a4nn
-│   │   │   ├── gpu1_1e14_penguin.z01
-│   │   │   ├── gpu1_1e14_penguin.z02
-│   │   │   ├── gpu1_1e14_penguin.zip
-│   │   │   ├── gpu1_1e15_penguin.z01
-│   │   │   ├── gpu1_1e15_penguin.zip
-│   │   │   ├── gpu1_1e16_penguin.z01
-│   │   │   └── gpu1_1e16_penguin.zip
+│   │   │   ├── gpu1_1e14_a4nn.z01
+│   │   │   ├── gpu1_1e14_a4nn.z02
+│   │   │   ├── gpu1_1e14_a4nn.zip
+│   │   │   ├── gpu1_1e15_a4nn.z01
+│   │   │   ├── gpu1_1e15_a4nn.zip
+│   │   │   ├── gpu1_1e16_a4nn.z01
+│   │   │   └── gpu1_1e16_a4nn.zip
 │   │   ├── no_a4nn
-│   │   │   ├── gpu1_1e14_no_penguin.z01
-│   │   │   ├── gpu1_1e14_no_penguin.z02
-│   │   │   ├── gpu1_1e14_no_penguin.zip
-│   │   │   ├── gpu1_1e15_no_penguin.z01
-│   │   │   ├── gpu1_1e15_no_penguin.z02
-│   │   │   ├── gpu1_1e15_no_penguin.zip
-│   │   │   ├── gpu1_1e16_no_penguin.z01
-│   │   │   └── gpu1_1e16_no_penguin.zip
+│   │   │   ├── gpu1_1e14_no_a4nn.z01
+│   │   │   ├── gpu1_1e14_no_a4nn.z02
+│   │   │   ├── gpu1_1e14_no_a4nn.zip
+│   │   │   ├── gpu1_1e15_no_a4nn.z01
+│   │   │   ├── gpu1_1e15_no_a4nn.z02
+│   │   │   ├── gpu1_1e15_no_a4nn.zip
+│   │   │   ├── gpu1_1e16_no_a4nn.z01
+│   │   │   └── gpu1_1e16_no_a4nn.zip
 │   ├── 4gpu
 │   │   ├── a4nn
-│   │   │   ├── gpu4_1e14_penguin.z01
-│   │   │   ├── gpu4_1e14_penguin.zip
-│   │   │   ├── gpu4_1e15_penguin.z01
-│   │   │   ├── gpu4_1e15_penguin.zip
-│   │   │   ├── gpu4_1e16_penguin.z01
-│   │   │   └── gpu4_1e16_penguin.zip
+│   │   │   ├── gpu4_1e14_a4nn.z01
+│   │   │   ├── gpu4_1e14_a4nn.zip
+│   │   │   ├── gpu4_1e15_a4nn.z01
+│   │   │   ├── gpu4_1e15_a4nn.zip
+│   │   │   ├── gpu4_1e16_a4nn.z01
+│   │   │   └── gpu4_1e16_a4nn.zip
 │   │   ├── no_a4nn
-│   │   │   ├── gpu4_1e14_no_penguin.z01
-│   │   │   ├── gpu4_1e14_no_penguin.z02
-│   │   │   ├── gpu4_1e14_no_penguin.zip
-│   │   │   ├── gpu4_1e15_no_penguin.z01
-│   │   │   ├── gpu4_1e15_no_penguin.z02
-│   │   │   ├── gpu4_1e15_no_penguin.zip
-│   │   │   ├── gpu4_1e16_no_penguin.z01
-│   │   │   └── gpu4_1e16_no_penguin.zip
+│   │   │   ├── gpu4_1e14_no_a4nn.z01
+│   │   │   ├── gpu4_1e14_no_a4nn.z02
+│   │   │   ├── gpu4_1e14_no_a4nn.zip
+│   │   │   ├── gpu4_1e15_no_a4nn.z01
+│   │   │   ├── gpu4_1e15_no_a4nn.z02
+│   │   │   ├── gpu4_1e15_no_a4nn.zip
+│   │   │   ├── gpu4_1e16_no_a4nn.z01
+│   │   │   └── gpu4_1e16_no_a4nn.zip
 ├── protein_dataset
 │   ├── 1e14.zip.bz2
 │   ├── 1e15.zip.bz2
@@ -101,8 +101,8 @@ The ZIP files that contain the results from our workflow executions are split ac
 to create a complete archive before unzipping. Please run the following commands to properly unpack a ZIP archive and use the same format for other ZIP archives in this dataverse:
 
 ```
-$ zip -FF gpu1_1e14_no_penguin.zip --out gpu1_1e14_no_penguin_FULL.zip
-$ unzip -FF gpu1_1e14_no_penguin_FULL.zip
+$ zip -FF gpu1_1e14_no_a4nn.zip --out gpu1_1e14_no_a4nn_FULL.zip
+$ unzip -FF gpu1_1e14_no_a4nn_FULL.zip
 ```
 
 ---
