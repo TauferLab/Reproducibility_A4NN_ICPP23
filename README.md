@@ -20,59 +20,46 @@ This repository contains all the necessary scripts and data to reproduce figures
 │   └── gpu_environment.yml
 ├── icpp_training_results
 │   ├── 1gpu
-│   │   ├── no_stopping
-│   │   │   ├── 1gpu_1e14_training_data.tab
-│   │   │   ├── 1gpu_1e15_training_data.tab
-│   │   │   └── 1gpu_1e16_training_data.tab
-│   │   ├── stopping
-│   │   │   ├── 1gpu_1e14_stopping_training_data.tab
-│   │   │   ├── 1gpu_1e14_stopping_training_data.tab
-│   │   │   └── 1gpu_1e14_stopping_training_data.tab
+│   │   ├── early_termination
+│   │   │   ├── 1gpu_1e14_early_termination_training_data.tab
+│   │   │   ├── 1gpu_1e15_early_termination_training_data.tab
+│   │   │   └── 1gpu_1e16_early_terminationg_training_data.tab
+│   │   ├── no_early_termination
+│   │   │   ├── 1gpu_1e14_no_early_termination_training_data.tab
+│   │   │   ├── 1gpu_1e15_no_early_termination_training_data.tab
+│   │   │   └── 1gpu_1e16_no_early_termination_training_data.tab
 │   ├── 4gpu
-│   │   ├── no_stopping
-│   │   │   ├── 4gpu_1e14_training_data.tab
-│   │   │   ├── 4gpu_1e15_training_data.tab
-│   │   │   └── 4gpu_1e16_training_data.tab
-│   │   ├── stopping
-│   │   │   ├── 4gpu_1e14_stopping_training_data.tab
-│   │   │   ├── 4gpu_1e14_stopping_training_data.tab
-│   │   │   └── 4gpu_1e14_stopping_training_data.tab
+│   │   ├── early_termination
+│   │   │   ├── 4gpu_1e14_early_termination_stopping_training_data.tab
+│   │   │   ├── 4gpu_1e15_early_termination_stopping_training_data.tab
+│   │   │   └── 4gpu_1e16_early_termination_stopping_training_data.tab
 ├── models
 │   ├── 1gpu
-│   │   ├── a4nn
-│   │   │   ├── gpu1_1e14_a4nn.z01
-│   │   │   ├── gpu1_1e14_a4nn.z02
-│   │   │   ├── gpu1_1e14_a4nn.zip
-│   │   │   ├── gpu1_1e15_a4nn.z01
-│   │   │   ├── gpu1_1e15_a4nn.zip
-│   │   │   ├── gpu1_1e16_a4nn.z01
-│   │   │   └── gpu1_1e16_a4nn.zip
-│   │   ├── no_a4nn
-│   │   │   ├── gpu1_1e14_no_a4nn.z01
-│   │   │   ├── gpu1_1e14_no_a4nn.z02
-│   │   │   ├── gpu1_1e14_no_a4nn.zip
-│   │   │   ├── gpu1_1e15_no_a4nn.z01
-│   │   │   ├── gpu1_1e15_no_a4nn.z02
-│   │   │   ├── gpu1_1e15_no_a4nn.zip
-│   │   │   ├── gpu1_1e16_no_a4nn.z01
-│   │   │   └── gpu1_1e16_no_a4nn.zip
+│   │   ├── early_termination
+│   │   │   ├── gpu1_1e14_early_termination.z01
+│   │   │   ├── gpu1_1e14_early_termination.z02
+│   │   │   ├── gpu1_1e14_early_termination.zip
+│   │   │   ├── gpu1_1e15_early_termination.z01
+│   │   │   ├── gpu1_1e15_early_termination.zip
+│   │   │   ├── gpu1_1e16_early_termination.z01
+│   │   │   └── gpu1_1e16_early_termination.zip
+│   │   ├── no_early_termination
+│   │   │   ├── gpu1_1e14_no_early_termination.z01
+│   │   │   ├── gpu1_1e14_no_early_termination.z02
+│   │   │   ├── gpu1_1e14_no_early_termination.zip
+│   │   │   ├── gpu1_1e15_no_early_termination.z01
+│   │   │   ├── gpu1_1e15_no_early_termination.z02
+│   │   │   ├── gpu1_1e15_no_early_termination.zip
+│   │   │   ├── gpu1_1e16_no_early_termination.z01
+│   │   │   └── gpu1_1e16_no_early_termination.zip
 │   ├── 4gpu
-│   │   ├── a4nn
-│   │   │   ├── gpu4_1e14_a4nn.z01
-│   │   │   ├── gpu4_1e14_a4nn.zip
-│   │   │   ├── gpu4_1e15_a4nn.z01
-│   │   │   ├── gpu4_1e15_a4nn.zip
-│   │   │   ├── gpu4_1e16_a4nn.z01
-│   │   │   └── gpu4_1e16_a4nn.zip
-│   │   ├── no_a4nn
-│   │   │   ├── gpu4_1e14_no_a4nn.z01
-│   │   │   ├── gpu4_1e14_no_a4nn.z02
-│   │   │   ├── gpu4_1e14_no_a4nn.zip
-│   │   │   ├── gpu4_1e15_no_a4nn.z01
-│   │   │   ├── gpu4_1e15_no_a4nn.z02
-│   │   │   ├── gpu4_1e15_no_a4nn.zip
-│   │   │   ├── gpu4_1e16_no_a4nn.z01
-│   │   │   └── gpu4_1e16_no_a4nn.zip
+│   │   ├── early_termination
+│   │   │   ├── gpu4_1e14_early_termination.z01
+│   │   │   ├── gpu4_1e14_early_termination.zip
+│   │   │   ├── gpu4_1e15_early_termination.z01
+│   │   │   ├── gpu4_1e15_early_termination.zip
+│   │   │   ├── gpu4_1e16_early_termination.z01
+│   │   │   └── gpu4_1e16_early_termination.zip
 ├── protein_dataset
 │   ├── 1e14.zip.bz2
 │   ├── 1e15.zip.bz2
