@@ -22,21 +22,18 @@ tick_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size
 bar_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=25)
 legend_font = fm.FontProperties(family='STIXGeneral', math_fontfamily="stix", size=30)
 
-# Create figures/ directory to place all figures, if it doesn't already exist
-if not os.path.exists("./figures"):
-    os.mkdir("./figures")
-
 def load_data():
     data_files = []
 
     for root, dirs, files in sorted(os.walk("./icpp_training_results")):
-        if "stopping" in root:
+        if "early_termination" in root:
             for i in files:
                 f = os.path.join(root, i)
                 data_files.append(f)
 
-    all_stopping = [pd.read_csv(data_files[3]), pd.read_csv(data_files[-1]), pd.read_csv(data_files[4]), pd.read_csv(data_files[-2]), pd.read_csv(data_files[5]), pd.read_csv(data_files[-3])]
-
+    data_files = sorted(data_files)
+    all_stopping = [pd.read_csv(data_files[0]), pd.read_csv(data_files[-3]), pd.read_csv(data_files[1]), pd.read_csv(data_files[-2]), pd.read_csv(data_files[2]), pd.read_csv(data_files[-1])]
+    
     return data_files, all_stopping
 
 files, all_stopping = load_data()
@@ -51,7 +48,7 @@ def get_epoch_converged(arch_df):
         return pd.Series({'epoch_converged': np.inf, 'final_fitness': sorted_by_epoch['val_accs'].iloc[-1], 'prediction':None})
 
 def make_figure2():
-    df = pd.read_csv('icpp_training_results/1gpu/no_stopping/1gpu_1e15_training_data.csv')
+    df = pd.read_csv('icpp_training_results/1gpu/no_early_termination/1gpu_1e15_no_early_termination_training_data.csv')
     by_arch = df.groupby('arch')
     where_converged = by_arch.apply(get_epoch_converged).reset_index()  
     print(where_converged.sort_values('epoch_converged', ascending=True).iloc[20:40])
@@ -97,7 +94,7 @@ def make_figure2():
     plt.savefig('figures/figure2.png')
     return
 
-# Figure 6
+# Figure 5
 def one_line_per_arch_a4nn(arch_df):
     sorted_by_epoch = arch_df.sort_values('epoch', ascending=False)
     if sorted_by_epoch['converged'].iloc[0] == True:
@@ -143,10 +140,10 @@ def all_paretos():
         elif "1e16" in i:  
             beam = "High"    
 
-        if "no" in i:  
+        if "no_early_termination" in i:  
             stop = False
             one_line = by_arch.apply(one_line_per_arch).sort_values('arch', ascending=True).reset_index()  
-        elif "stopping" in i:  
+        else: 
             stop = True  
             one_line = by_arch.apply(one_line_per_arch_a4nn).sort_values('arch', ascending=True).reset_index()
 
@@ -169,7 +166,7 @@ def all_paretos():
         all_paretos = pd.concat([all_paretos, pareto_optimal_arches], ignore_index=True)
     return all_paretos
 
-def make_figure6a():
+def make_figure5a():
     # 1 GPU - with A4NN
     df = all_paretos()
     fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
@@ -211,11 +208,11 @@ def make_figure6a():
 
     ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
     ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
-    plt.savefig('figures/figure6a.png')
+    plt.savefig('figures/figure5a.png')
 
     return
 
-def make_figure6b():
+def make_figure5b():
     # 1 GPU - without A4NN
     df = all_paretos().copy()
     fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
@@ -258,16 +255,16 @@ def make_figure6b():
 
     ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
     ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
-    plt.savefig('figures/figure6b.png')
+    plt.savefig('figures/figure5b.png')
 
     return
 
-# Figure 7
+# Figure 6
 def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e16):
     epochs_run = {
         'NSGA-Net': np.repeat(num_epochs_no_stop, 3),
-        'NAME (1 GPU)': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
-        'NAME (4 GPUs)': (stop_1e14[1], stop_1e15[1], stop_1e16[1]),
+        'A4NN (1 GPU)': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
+        'A4NN (4 GPUs)': (stop_1e14[1], stop_1e15[1], stop_1e16[1]),
     }
 
     x = np.arange(len(beams))  # the label locations
@@ -303,11 +300,11 @@ def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e
 
     ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="upper center", bbox_to_anchor=(0.5, -0.1),  ncol=3, prop=legend_font, frameon=False)
 
-    plt.savefig('figures/figure7.png')
+    plt.savefig('figures/figure6.png')
     plt.close()
     return
 
-def make_figure7(files):
+def make_figure6(files):
     no_stop_1e14, no_stop_1e15, no_stop_1e16 = [], [], []
     stop_1e14, stop_1e15, stop_1e16 = [], [], []
     stop_1e14_len, stop_1e15_len, stop_1e16_len = [], [], []
@@ -327,7 +324,7 @@ def make_figure7(files):
         beam = f.split('/')[-1].split('_')[1].strip()
         gpus = f.split('/')[-1].split('_')[0].strip()
         stop = f.split('/')[-1].strip()
-        if "stopping" in stop:
+        if "termination" in stop and not "no" in stop:
             df = pd.read_csv(f)
 
             if "1e14" in stop:
@@ -350,9 +347,8 @@ def make_figure7(files):
 
     return [no_stop_1e14, no_stop_1e15, no_stop_1e16], [stop_1e14, stop_1e15, stop_1e16]
 
-
-# Figure 8
-def make_figure8():
+# Figure 7
+def make_figure7():
     sets = list()
     percents = list()
 
@@ -403,11 +399,11 @@ def make_figure8():
     ax.text(x=3.1, y=-2, s=lower[1], font=lfont)
     ax.text(x=5.25, y=-2, s=lower[2], font=lfont)
 
-    plt.savefig('figures/figure8.png', bbox_inches='tight')
+    plt.savefig('figures/figure7.png', bbox_inches='tight')
 
     return
 
-# Figure 9
+# Figure 8
 def get_run_time(row):
     days = int(row.split('-')[0])
     hours = int(row.split('-')[1].split('_')[0])
@@ -443,9 +439,9 @@ def plot_times():
     stop_1e16 = np.array([time_df[b16 & stop & gpu1][time_format].item(), time_df[b16 & stop & gpu4][time_format].item()])/secs
 
     epochs_run = {
-        'NSGA-Net': (no_stop_1e14[0], no_stop_1e15[0], no_stop_1e16[0]),
-        'NAME (1 GPU)': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
-        'NAME (4 GPUs)': (stop_1e14[1], stop_1e15[1], stop_1e16[1]),
+        'NAS Only': (no_stop_1e14[0], no_stop_1e15[0], no_stop_1e16[0]),
+        'A4NN (1 GPU)': (stop_1e14[0], stop_1e15[0], stop_1e16[0]),
+        'A4NN (4 GPUs)': (stop_1e14[1], stop_1e15[1], stop_1e16[1]),
     }
 
     x = np.arange(len(beams))  # the label locations
@@ -473,12 +469,12 @@ def plot_times():
     ax.set_yticklabels(ax.get_yticks(), color='black', font=tick_font)
 
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.1),  ncol=4, prop=legend_font, frameon=False)
-    plt.savefig('figures/figure9.png')
+    plt.savefig('figures/figure8.png')
     plt.close()
     
     return
 
-def make_figure9():
+def make_figure8():
     gpu=[1,1,1,1,1,1,4,4,4,4,4,4]
     stopping=[False, False, False, True, True, True, False, False, False, True, True, True]
     dataset=['14','15','16','14','15','16','14','15','16','14','15','16']
@@ -500,17 +496,17 @@ def make_figure9():
 # Figure 2 - Predictive Model Predictions vs. Observed Accuracy
 make_figure2()
 
-# Figure 6a - 1 GPU with A4NN Workflow Pareto Optimal Architectures
-make_figure6a()
+# Figure 5a - 1 GPU with A4NN Workflow Pareto Optimal Architectures
+make_figure5a()
 
-# Figure 6b - 1 GPU with NSGA-Net Only Pareto Optimal Architectures
-make_figure6b()
+# Figure 5b - 1 GPU with NSGA-Net Only Pareto Optimal Architectures
+make_figure5b()
 
-# Figure 7 - Epoch Savings
-no_stop, stop = make_figure7(files)
+# Figure 6 - Epoch Savings
+no_stop, stop = make_figure6(files)
 
-# Figure 8 - Violin Plot of Convergence
+# Figure 7 - Violin Plot of Convergence
+make_figure7()
+
+# Figure 8 - Time Savings
 make_figure8()
-
-# Figure 9 - Time Savings
-make_figure9()
