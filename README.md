@@ -100,24 +100,23 @@ Please run the setup script by running `./setup.sh` in the command line. This co
 
     All figures will be saved to the `figures/` directory that is created after running the program. The following images are what you should see when reproducing the figures in the Python script or Jupyter Notebook.
 
-<p style="text-align: center; font-size:20px; font-weight: 700">Figure 2: Example of the fitness (accuracy) prediction for
-a NN trained on our use case</p>
+<p align="center"><em>Figure 2: Example of the fitness (accuracy) prediction for a NN trained on our use case </em></p>
 <p align="center"><img src="images/figure2.png" width="60%"/></p>
 
-<p style="text-align: center; font-size:20px; font-weight: 700">Figure 5, part A and B</p>
+<p align="center"><em>Figures 6a, 6b: Validation accuracy and FLOPS of the Pareto optimal models for NAME and NSGA-Net for the three beam intensities.</em></p>
 <p align="center">
-<img src="images/figure5a.png" width="48%"/>
-<img src="images/figure5b.png" width="48%"/>
+<img src="images/figure6a.png" width="48%"/>
+<img src="images/figure6b.png" width="48%"/>
 </p>
 
-<p style="text-align: center; font-size:20px; font-weight: 700">Figure 6</p>
-<p align="center"><img src="images/figure6.png" width="60%"/></p>
-
-<p style="text-align: center; font-size:20px; font-weight: 700">Figure 7</p>
+<p align="center"><em>Figure 7: Epochs required for testing 100 architectures, percentages of savings associated with NAME when using one and four GPUs, and percentage of gains with NAME over the standalone NAS when using one and four GPUs.</em></p>
 <p align="center"><img src="images/figure7.png" width="60%"/></p>
 
-<p style="text-align: center; font-size:20px; font-weight: 700">Figure 8</p>
+<p align="center"><em>Figure 8:  Effect of the different beam intensities on the convergence of the model’s predictions in terms of the number of epochs and the percentage of the converged models.</em></p>
 <p align="center"><img src="images/figure8.png" width="60%"/></p>
+
+<p align="center"><em>Figure 9: Wall times required by the training in NAME work- flow and standalone NAS for the three beam intensities using one GPU (for the NAME and NSGA-Net) and for four GPUs (for NAME).</em></p>
+<p align="center"><img src="images/figure9.png" width="60%"/></p>
 
 
 
