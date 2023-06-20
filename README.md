@@ -9,20 +9,20 @@ This artifact contains metadata and results from our workflow executions for dif
 
 # Protein Diffraction Dataset
 All 3 datasets in `protein_dataset/` are generating with the following apparatus. This is an overview of an X-ray Free Electron Laser (XFEL) experiment generating two different sets of patterns for two conformations of the same eEF2 protein. More about this setup in [[1]](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#publications). 
-<p align="center"><img src="images/experiment.png" alt="Experiment" width="76%"/></p>
+<p align="center"><img src="images/experiment.png" width="76%"/></p>
 
 
 The following are some of the images from within this repo. We have diffraction patterns from laser beams at low, medium, and high intensities, respectively. Notice how the resolution becomes more detailed as the beam intensity is increased.
 <p align="center">
-<img src="images/1e14_ef2_1n0vc_ptm07957.jpg" alt="Low Beam" width="25%"/>
-<img src="images/1e15_ef2_1n0vc_ptm07957.jpg" alt="Medium Beam" width="25%"/>
-<img src="images/1e16_ef2_1n0vc_ptm07957.jpg" alt="High Beam" width="25%"/>
+<img src="images/1e14_ef2_1n0vc_ptm07957.jpg" width="25%"/>
+<img src="images/1e15_ef2_1n0vc_ptm07957.jpg" width="25%"/>
+<img src="images/1e16_ef2_1n0vc_ptm07957.jpg" width="25%"/>
 </p>
 
 
 # A4NN Workflow
 This is the full A4NN workflow, as mentioned in [[1]](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#publications). We include it here as a reference since this artifact focuses mainly on the reproducibility of the tracker, data commons, analyzer, metadata, and models part of the workflow. 
-<p align="center"><img src="images/workflow_diagram.png" alt="A4NN Workflow" width="75%"/></p>
+<p align="center"><img src="images/workflow_diagram.png" width="75%"/></p>
 
 
 # Repository Structure
@@ -102,22 +102,22 @@ Please run the setup script by running `./setup.sh` in the command line. This co
 
 <p style="text-align: center; font-size:20px; font-weight: 700">Figure 2: Example of the fitness (accuracy) prediction for
 a NN trained on our use case</p>
-<p align="center"><img src="images/figure2.png" alt="Figure 2" width="60%"/></p>
+<p align="center"><img src="images/figure2.png" width="60%"/></p>
 
 <p style="text-align: center; font-size:20px; font-weight: 700">Figure 5, part A and B</p>
 <p align="center">
-<img src="images/figure5a.png" alt="Figure 5a" width="48%"/>
-<img src="images/figure5b.png" alt="Figure 5b" width="48%"/>
+<img src="images/figure5a.png" width="48%"/>
+<img src="images/figure5b.png" width="48%"/>
 </p>
 
 <p style="text-align: center; font-size:20px; font-weight: 700">Figure 6</p>
-<p align="center"><img src="images/figure6.png" alt="Figure 6" width="60%"/></p>
+<p align="center"><img src="images/figure6.png" width="60%"/></p>
 
 <p style="text-align: center; font-size:20px; font-weight: 700">Figure 7</p>
-<p align="center"><img src="images/figure7.png" alt="Figure 7" width="60%"/></p>
+<p align="center"><img src="images/figure7.png" width="60%"/></p>
 
 <p style="text-align: center; font-size:20px; font-weight: 700">Figure 8</p>
-<p align="center"><img src="images/figure8.png" alt="Figure 8" width="60%"/></p>
+<p align="center"><img src="images/figure8.png" width="60%"/></p>
 
 
 
