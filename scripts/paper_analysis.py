@@ -104,7 +104,7 @@ def make_figure2():
     plt.savefig(f'{FIGS}/figure2.png')
     return
 
-# Figure 5
+# Figure 6
 def one_line_per_arch_a4nn(arch_df):
     sorted_by_epoch = arch_df.sort_values('epoch', ascending=False)
     if sorted_by_epoch['converged'].iloc[0] == True:
@@ -176,7 +176,7 @@ def all_paretos():
         all_paretos = pd.concat([all_paretos, pareto_optimal_arches], ignore_index=True)
     return all_paretos
 
-def make_figure5a():
+def make_figure6a():
     # 1 GPU - with A4NN
     df = all_paretos()
     fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
@@ -218,11 +218,11 @@ def make_figure5a():
 
     ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
     ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
-    plt.savefig(f'{FIGS}/figure5a.png')
+    plt.savefig(f'{FIGS}/figure6a.png')
 
     return
 
-def make_figure5b():
+def make_figure6b():
     # 1 GPU - without A4NN
     df = all_paretos().copy()
     fig, ax = plt.subplots(layout='constrained', figsize=figsize, dpi=160)
@@ -265,11 +265,11 @@ def make_figure5b():
 
     ax.set_xticklabels(ax.get_xticks(), color= "black" , font=tick_font)
     ax.set_yticklabels(ax.get_yticks(), color= "black" , font=tick_font)
-    plt.savefig(f'{FIGS}/figure5b.png')
+    plt.savefig(f'{FIGS}/figure6b.png')
 
     return
 
-# Figure 6
+# Figure 7
 def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e16):
     epochs_run = {
         'NSGA-Net': np.repeat(num_epochs_no_stop, 3),
@@ -310,11 +310,11 @@ def plot_epochs_savings(beams, num_epochs_no_stop, stop_1e14, stop_1e15, stop_1e
 
     ax.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="upper center", bbox_to_anchor=(0.5, -0.1),  ncol=3, prop=legend_font, frameon=False)
 
-    plt.savefig(f'{FIGS}/figure6.png')
+    plt.savefig(f'{FIGS}/figure7.png')
     plt.close()
     return
 
-def make_figure6(files):
+def make_figure7(files):
     no_stop_1e14, no_stop_1e15, no_stop_1e16 = [], [], []
     stop_1e14, stop_1e15, stop_1e16 = [], [], []
     stop_1e14_len, stop_1e15_len, stop_1e16_len = [], [], []
@@ -355,8 +355,8 @@ def make_figure6(files):
 
     return [no_stop_1e14, no_stop_1e15, no_stop_1e16], [stop_1e14, stop_1e15, stop_1e16]
 
-# Figure 7
-def make_figure7():
+# Figure 8
+def make_figure8():
     sets = list()
     percents = list()
 
@@ -407,11 +407,11 @@ def make_figure7():
     ax.text(x=3.1, y=-2, s=lower[1], font=lfont)
     ax.text(x=5.25, y=-2, s=lower[2], font=lfont)
 
-    plt.savefig(f'{FIGS}/figure7.png', bbox_inches='tight')
+    plt.savefig(f'{FIGS}/figure8.png', bbox_inches='tight')
 
     return
 
-# Figure 8
+# Figure 9
 def get_run_time(row):
     days = int(row.split('-')[0])
     hours = int(row.split('-')[1].split('_')[0])
@@ -477,12 +477,12 @@ def plot_times():
     ax.set_yticklabels(ax.get_yticks(), color='black', font=tick_font)
 
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.1),  ncol=4, prop=legend_font, frameon=False)
-    plt.savefig(f'{FIGS}/figure8.png')
+    plt.savefig(f'{FIGS}/figure9.png')
     plt.close()
     
     return
 
-def make_figure8():
+def make_figure9():
     gpu=[1,1,1,1,1,1,4,4,4,4,4,4]
     stopping=[False, False, False, True, True, True, False, False, False, True, True, True]
     dataset=['14','15','16','14','15','16','14','15','16','14','15','16']
@@ -504,17 +504,17 @@ def make_figure8():
 # Figure 2 - Predictive Model Predictions vs. Observed Accuracy
 make_figure2()
 
-# Figure 5a - 1 GPU with A4NN Workflow Pareto Optimal Architectures
-make_figure5a()
+# Figure 6a - 1 GPU with A4NN Workflow Pareto Optimal Architectures
+make_figure6a()
 
-# Figure 5b - 1 GPU with NSGA-Net Only Pareto Optimal Architectures
-make_figure5b()
+# Figure 6b - 1 GPU with NSGA-Net Only Pareto Optimal Architectures
+make_figure6b()
 
-# Figure 6 - Epoch Savings
-no_stop, stop = make_figure6(files)
+# Figure 7 - Epoch Savings
+no_stop, stop = make_figure7(files)
 
-# Figure 7 - Violin Plot of Convergence
-make_figure7()
-
-# Figure 8 - Time Savings
+# Figure 8 - Violin Plot of Convergence
 make_figure8()
+
+# Figure 9 - Time Savings
+make_figure9()
