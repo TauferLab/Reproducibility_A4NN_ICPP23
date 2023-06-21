@@ -129,6 +129,11 @@ Please run the setup script by running `./setup.sh` in the command line. This co
 
 
 
+# Side Notes
+* Each dataset in `protein_dataset/` contains 63,508 images for training and 15,876 images for testing (80% - 20% train-test split). There are 238,152 files for the total protein diffraction dataset.
+* Each experiment within `models/` contains 100 models that train for a max of 25 epochs each. There are approximately 72,900 total model-related files.
+
+
 
 # Publications
 1. Georgia Channing, Ria Patel, Paula Olaya, Ariel Keller Rorabaugh, Osamu Miyashita, Silvina Caino-Lores, Catherine Schuman, Florence Tama, and Michela Taufer. “Composable Workflow for Accelerating Neural Architecture Search Using In Situ Analytics for Protein Characterization”. _In: Proceedings of the 52nd International Conference on Parallel Processing (ICPP)_. Salt Lake City, UT, USA: ACM, Aug. 2023, pp. 1–10
