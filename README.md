@@ -64,8 +64,9 @@ Refer to the article [Using Anaconda on older operating systems](https://docs.an
 
 Please run the setup script by running `./setup.sh` in the command line. This command will build the necessary Conda environment, unzip all protein diffraction image datasets, and unzip all pre-trained models.
 
-**Note**: Please uncomment the necessary version of the Conda environment to be built within the `setup.sh` script. The default is the CPU version.
+Please uncomment the necessary version of the Conda environment to be built within the `setup.sh` script. The default is the CPU version.
 
+**Important Note:** If running this script, it will unzip all data. **_It requires 70GB of storage_** on the local machine. If there is not enough storage, it will suffice to comment out which data and models are desired in the setup.sh script.
 
 
 
