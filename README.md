@@ -134,5 +134,12 @@ Please run the setup script by running `./setup.sh` in the command line. This co
 
 
 
+# Copyright and License
+Copyright (c) 2023, Global Computing Lab
+
+A4NN is distributed under terms of the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0) with LLVM Exceptions.
+
+See [LICENSE](LICENSE) for more details.
+
 
 
