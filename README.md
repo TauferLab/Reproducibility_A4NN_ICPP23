@@ -13,7 +13,6 @@ This artifact contains metadata and results from our workflow executions on seve
 * [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation-execution-time-10-minutes)
 * [Running Predictions](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#running-predictions-execution-time-2-minutes)
 * [Analyzing Reproduced Results](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#analyzing-reproduced-results-execution-time-2-minutes)
-* [Reproducing Results](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#reproducing-results)
 * [Other Relevant Publications](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#other-relevant-publications)
 * [Copyright and License](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#copyright-and-license)
 
