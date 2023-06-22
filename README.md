@@ -113,7 +113,7 @@ It is necessary to organize the files once downloaded to comply with the below d
 
 Run the setup script by running `./setup.sh` in the command line. This command will build the necessary Conda environment, unzip all protein diffraction image datasets, and unzip all pre-trained models.
 
-Uncomment the necessary version of the Conda environment to be built within the `setup.sh` script. The default is the CPU version.
+Within the setup script, uncomment the necessary Conda environment to be built within the `setup.sh` script (Lines 12-13). There are 2 options: one for using CUDA-enabled GPU devices and one for CPU-only devices. The default environment is set to build the CPU-only version.
 
 ## Important Note
 
