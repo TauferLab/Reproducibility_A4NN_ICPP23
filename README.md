@@ -6,14 +6,13 @@ This artifact contains metadata and results from our workflow executions on seve
 
 
 ## Contents
-* [Protein Diffraction Dataset](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#protein-diffraction-dataset)
-* [A4NN Workflow](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#a4nn-workflow)
+* [Background](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#background)
 * [Repository Structure](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#repository-structure)
+* [Prerequisites](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#prerequisites)
 * [Downloading Datasets and Models](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#downloading-datasets-and-models)
-* [Requirements](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#requirements)
-* [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation-10-minutes)
-* [Running Predictions](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#running-predictions-2-minutes)
-* [Analyzing Results](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#analyzing-results-2-minutes)
+* [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation-execution-time-10-minutes)
+* [Running Predictions](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#running-predictions-execution-time-2-minutes)
+* [Analyzing Reproduced Results](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#analyzing-reproduced-results-execution-time-2-minutes)
 * [Reproducing Results](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#reproducing-results)
 * [Other Relevant Publications](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#other-relevant-publications)
 * [Copyright and License](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#copyright-and-license)
@@ -27,9 +26,9 @@ This artifact contains metadata and results from our workflow executions on seve
 Georgia Channing, Ria Patel, Paula Olaya, Ariel Keller Rorabaugh, Osamu Miyashita, Silvina Caino-Lores, Catherine Schuman, Florence Tama, and Michela Taufer. “Composable Workflow for Accelerating Neural Architecture Search Using In Situ Analytics for Protein Characterization”. _In: Proceedings of the 52nd International Conference on Parallel Processing (ICPP)_. Salt Lake City, UT, USA: ACM, Aug. 2023, pp. 1–10
 
 
+# Background
 
-
-# Protein Diffraction Dataset
+## Protein Diffraction Dataset
 All 3 datasets in `protein_dataset/` are generated with the following apparatus. This is an overview of an X-ray Free Electron Laser (XFEL) experiment generating two different sets of patterns for two conformations of the same EF2 protein. 
 <p align="center"><img src="images/experiment.png" width="76%"/></p>
 
@@ -44,7 +43,7 @@ The following are some of the images from within this repo. We have diffraction 
 
 
 
-# A4NN Workflow
+## A4NN Workflow
 This is the full A4NN workflow. We include it here as a reference since this artifact focuses mainly on the reproducibility of the tracker, data commons, analyzer, and outputs (metadata and models) part of the workflow. 
 <p align="center"><img src="images/workflow_diagram.png" width="75%"/></p>
 
@@ -74,7 +73,7 @@ The following requirements are necessary to build the environment from the YAML 
 Refer to the article [Using Anaconda on older operating systems](https://docs.anaconda.com/free/anaconda/install/old-os/) if the local machine OS does not support the versions above.
 
 ## File Storage Requirements
-* 70GB of storage is required if all datasets and models are to be used for predictions. It is possible to unzip some datasets and their corresponding experiment models. This is explained in the [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation) section.
+* 70GB of storage is required if all datasets and models are to be used for predictions. It is possible to unzip some datasets and their corresponding experiment models. This is explained in the [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation-execution-time-10-minutes) section.
 
 
 # Downloading Datasets and Models
@@ -84,11 +83,11 @@ It is necessary to organize the files once downloaded to comply with the below d
 
 `protein_dataset/`: contains Bzip2 archives that have simulated protein diffraction pattern images for low, medium, and high beam intensities. Used as input dataset for `predict.py`
    * Datasets are in the Bzip2 files `1e14.zip.bz2`, `1e15.zip.bz2`, and `1e16.zip.bz2`. _Move these files to this `protein_dataset/` directory._
-   * `1e14/`, `1e15/`, and `1e16/` will be in this directory after running `setup.sh` script (later in the [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation) section). 
+   * `1e14/`, `1e15/`, and `1e16/` will be in this directory after running `setup.sh` script (later in the [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation-execution-time-10-minutes) section). 
    * Each dataset is 4.8GB after unzipping, making a **_total of 15GB_** for all 3 datasets. Each dataset contains 63,508 images for training and 15,876 images for testing (80/20 train-test split). 
    * There are **_238,152 images_** in total for all 3 datasets.
 
-`models/`: contains ZIP archives that include all packaged models generated from our experiments using each protein diffraction dataset (low, medium, high beam intensities) and different GPU distributions. These models are used as input models for `predict.py`. These will be unzipped in the `setup.sh` script (later in the [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation) section). 
+`models/`: contains ZIP archives that include all packaged models generated from our experiments using each protein diffraction dataset (low, medium, high beam intensities) and different GPU distributions. These models are used as input models for `predict.py`. These will be unzipped in the `setup.sh` script (later in the [Installation](https://github.com/TauferLab/Paper_2023_IEEEICPP_A4NN/tree/main#installation-execution-time-10-minutes) section). 
 * Each experiment contains 100 models that train for a max of 25 epochs each. There are approximately **_72,900 model-related files_** in total.
 * Each experiment on the 3 datasets are broken down to the following storage requirements. All models unzipped require **_55GB of file storage_**.
    * `gpu1/`
