@@ -1,0 +1,28 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Reproducibility_A4NN_ICPP23
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Georgia
+    family-names: Channing
+    email: gchannin@vols.utk.edu
+    orcid: 'https://orcid.org/0009-0001-6354-7527'
+  - given-names: Ria
+    family-names: Patel
+    email: rpatel77@vols.utk.edu
+    affiliation: University of Tennessee - Knoxville
+    orcid: 'https://orcid.org/0000-0002-0723-7911'
+  - given-names: Michela
+    family-names: Taufer
+    email: taufer@gmail.com
+    affiliation: University of Tennessee - Knoxville
+    orcid: 'https://orcid.org/0000-0002-0031-6377'
+repository-code: 'https://github.com/TauferLab/Reproducibility_A4NN_ICPP23'
+url: 'https://github.com/TauferLab/Reproducibility_A4NN_ICPP23'
+repository: 'https://doi.org/10.7910/DVN/JS9FR6'
+license: Apache-2.0
