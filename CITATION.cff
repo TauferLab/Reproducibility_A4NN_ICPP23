@@ -26,3 +26,6 @@ repository-code: 'https://github.com/TauferLab/Reproducibility_A4NN_ICPP23'
 url: 'https://github.com/TauferLab/Reproducibility_A4NN_ICPP23'
 repository: 'https://doi.org/10.7910/DVN/JS9FR6'
 license: Apache-2.0
+commit: 5749026ba9e381caa585cca587d00465daaffdc6
+version: '1.0'
+date-released: '2023-08-23'
